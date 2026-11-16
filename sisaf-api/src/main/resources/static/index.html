@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISAF - Sistema de Afiliaciones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .contenedor {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            max-width: 85%;
+            box-shadow: 0 4px 15px #0002;
+        }
+
+        h1 {
+            color: #1763a6;
+            text-align: center;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #1763a6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #104b80;
+        }
+
+        #resultado {
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h1>SISAF</h1>
+    <p>Sistema de Información de Afiliaciones y Subsidios</p>
+
+    <input type="text" id="usuario"
+           placeholder="Nombre de usuario">
+
+    <input type="password" id="password"
+           placeholder="Contraseña">
+
+    <button onclick="enviar('registro')">
+        Registrar usuario
+    </button>
+
+    <button onclick="enviar('login')">
+        Iniciar sesión
+    </button>
+
+    <p id="resultado" role="status"></p>
+</div>
+
+<script>
+    async function enviar(accion) {
+        const usuario = document.getElementById("usuario").value;
+        const password = document.getElementById("password").value;
+        const resultado = document.getElementById("resultado");
+
+        if (!usuario.trim() || !password.trim()) {
+            resultado.textContent = "Complete todos los campos.";
+            return;
+        }
+
+        try {
+            const respuesta = await fetch("/api/usuarios/" + accion, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ usuario, password })
+            });
+
+            const mensaje = await respuesta.text();
+            resultado.textContent = mensaje;
+            resultado.style.color = respuesta.ok ? "green" : "red";
+
+        } catch (error) {
+            resultado.textContent = "Error de conexión con el servidor.";
+            resultado.style.color = "red";
+        }
+    }
+</script>
+
+</body>
+</html>
